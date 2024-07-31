@@ -1,0 +1,1 @@
+* * * * * cd /tbcontact_cronjob && /usr/local/bin/python Data_PIP.py >> cron.log 2>&1

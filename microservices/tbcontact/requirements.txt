@@ -1,0 +1,8 @@
+fastapi
+pandas
+pymysql
+pymssql
+sqlalchemy
+requests
+quote
+numpy

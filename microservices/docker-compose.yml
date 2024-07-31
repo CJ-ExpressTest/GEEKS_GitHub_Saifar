@@ -1,0 +1,58 @@
+version: '3'
+services:
+  tbcontact:
+    container_name: tbcontact
+    ports:
+      - "3004:80"
+    build:
+      context: ./tbcontact
+      dockerfile: Dockerfile
+    depends_on:
+      - tbcontact-db
+    networks:
+      - moph-network
+  tbcontact-db:
+    image: mariadb
+    container_name: tbcontact-db
+    environment:
+      MYSQL_ROOT_PASSWORD: my_secret_password
+      MYSQL_DATABASE: Contact_in_tb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - 6004:3306
+    volumes:
+      - tbcontact-dbdata:/var/lib/mysql
+      - tbcontact-dblog:/var/log/mysql
+      - ./tbcontact/config/my.conf:/etc/mysql/conf.d/config-file.cnf
+      - ./tbcontact/init:/docker-entrypoint-initdb.d
+    networks:
+      - moph-network
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8080:80
+    networks:
+      - moph-network
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - 8800:8000
+      - 9000:9000
+      - 9443:9443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+volumes:
+  tbcontact-dbdata: {}
+  tbcontact-dblog: {}
+  portainer_data: {}
+networks:
+  moph-network:
+    driver: bridge
